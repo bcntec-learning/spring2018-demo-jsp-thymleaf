@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/search-entity-base}"
+      th:with="name='clientes',form=${clientesForm},criterios='::criterios',page='::page',title='Clientes!!!!'">
+
+<body>
+
+
+
+<div th:fragment="criterios">
+    <div>
+        <label th:for="${#ids.next('q')}"></label>
+        <input th:id="${#ids.next('q')}" th:name="q" type="text" th:value="${clientesForm.q}"/>
+    </div>
+</div>
+
+
+<td th:fragment="item" th:text="${item.name}" class="item " th:data="${item.id}"></td>
+
+<tr th:fragment="page" scope="row" th:each="item,stat : ${clientesForm.data}" class="item-row">
+    <td th:text="${item.id}" class="item" th:data="${item.id}"></td>
+    <td th:text="${item.name}" th:href="@{/clientes/{id}(id=${item.id})}"></td>
+
+</tr>
+
+
+
+</body>
+
+</html>

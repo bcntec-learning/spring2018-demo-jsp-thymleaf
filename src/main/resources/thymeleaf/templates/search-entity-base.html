@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/app-base}">
+
+<body>
+<section layout:fragment="content">
+    <h2 th:id="__${name}__-title">[(${title})]</h2>
+
+    <form th:id="${name}" th:action="@{/clientes}" method="post" th:object="${form}">
+        <input type='hidden' name="p" th:value="${form.p}"/>
+        <input type='hidden'  name="s" th:value="${form.s}"/>
+        <!-- panel de busqueda -->
+        <!-- <div layout:include="__${formCriterios}__"></div>  -->
+        <div class="row">
+
+            <div class="col-6" th:include="__${criterios}__"></div>
+            <div class="col-2"><input th:id="__${name}__-search" type="submit" value="Search" th:css="search"/></div>
+        </div>
+        <!--/*@thymesVar id="searchName" type="java.lang.String"*/-->
+        <table th:id="__${name}__-table" class="table table-hover">
+            <thead>
+
+            <!-- cabecera de tabla -->
+            <tr>
+                <th th:each="header,stat : ${form.headers}" th:text="${header}">
+                </th>
+            </tr>
+
+            </thead>
+
+
+            <div th:replace="__${page}__"></div>
+
+
+        </table>
+        <p th:id="__${name}__-next">Siguiente</p>
+
+    </form>
+
+    <script>
+        $(function () {
+            $('#[(${name})]-title').click(function () {
+                alert("hola");
+            });
+
+
+
+
+            $('#[(${name})]').on('submit',function (event) {
+
+
+                var z=  $('#[(${name})]').serialize();
+                console.log("z?"+z);
+
+                event.preventDefault();
+                $.ajax({
+                    url: '/clientes/page',
+                    type:'POST',
+                    data : z,
+                    success: function (data) {
+                        $('.item-row').remove();
+
+                        $('#[(${name})]-table').append(data);
+
+
+                    }
+                });
+
+
+
+            });
+
+            $('#[(${name})]-next').click(function (event) {
+
+                var data = $('#[(${name})]-table').attr("data");
+
+                dataParsed = JSON.parse(data);
+                console.log(dataParsed);
+                console.log(dataParsed.p);
+
+
+                $.ajax({
+                    url: '/clientes/page',
+                    data : "p="+(dataParsed.p+1),
+                    contentType: 'text/html',
+                    dataType : 'html',
+                    type: 'GET',
+                    success: function (data) {
+                        $('.item-row').remove();
+                        //$('#ResponseDiv').html(data);
+                        //alert(data);
+
+                        $('#[(${name})]-table').append(data);
+
+
+                    }
+                });
+            });
+
+
+
+            $('.item').click(function (event) {
+
+                var id = $(event.target).attr("data");
+                if(id != undefined){
+
+                }
+                console.log("hola item " + id);
+
+                $.ajax({
+                    url: '/clientes/' + id,
+                    contentType: 'text/html',
+                    dataType : 'html',
+                    type: 'GET',
+                    success: function (data) {
+
+                        //$('#ResponseDiv').html(data);
+                        //alert(data);
+                        $(event.target).html(data);
+
+                    }
+                });
+
+            });
+        });
+    </script>
+</section>
+
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/app-base}">
+
+<head>
+    <script type="text/javascript">
+
+
+        $(function () {
+
+            $.ajax({
+                url: '/clientes/list',
+                dataType : 'json',
+                type: 'GET',
+                success: function (data) {
+                    var clientSelect = $("#client");
+                    console.log(clientSelect[0]);
+                    $.each(data, function(i, client) {
+                        $('<option/>')
+                            .val(client.id).text(client.name)
+                            .appendTo(clientSelect);
+
+                    });
+
+                    //clientSelect[0].text('Select...');
+                }
+            });
+
+            $("#client").on("change", function (e) {
+                var t = $("#client option:selected").each(function(i, sele){
+                    if($(sele).attr('value') !== undefined){
+                        $("#submit").css("color","green");
+                    } else {
+                        $("#submit").css("color","red");
+                    }
+                });
+
+
+
+            });
+
+
+
+        });
+
+    </script>
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div th:background="red" th:errors="${facturaForm}">...</div>
+    <form th:action="@{/factura}" method="post" th:object="${facturaForm}" >
+        <label th:for="id">First</label>:
+        <input id="id" name="first" autofocus="autofocus" th:value="*{id}"/>
+        <span th:if="${#fields.hasErrors('id')}" th:errors="*{id}"></span><br/>
+
+
+        <label th:for="client" >Cliente</label>:
+        <select id="client" name="last" th:value="*{client}">
+            <option>Loading Text...</option>
+        </select>
+
+
+        <span th:if="${#fields.hasErrors('client')}" th:errors="*{client}"></span><br/>
+
+        <input id="submit" type="submit" value="POST" disabled/>
+
+</section>
+</body>
+</html>
